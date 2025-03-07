@@ -44,19 +44,22 @@ class FakeCocktailsAPI: CocktailsAPI {
         .eraseToAnyPublisher()
     }
     
-    func fetchCocktails(_ handler: @escaping (Result<Data, CocktailsAPIError>) -> Void) {
+    func fetchCocktails(_ completion: @escaping (Result<[CocktailModel], CocktailsAPIError>) -> Void) {
         if case let .count(count) = failure {
             failure = count - 1 == 0 ? .never : .count(count - 1)
             queue.async {
-                sleep(3)
-                handler(.failure(.unavailable))
+                completion(.failure(CocktailsAPIError.unavailable))
             }
             return
         }
         let data = jsonData
         queue.async {
-            sleep(3)
-            handler(.success(data))
+            do {
+                let cocktails = try JSONDecoder().decode([CocktailModel].self, from: data)
+                completion(.success(cocktails))
+            } catch {
+                completion(.failure(CocktailsAPIError.jsonParingFailed))
+            }
         }
     }
 }
