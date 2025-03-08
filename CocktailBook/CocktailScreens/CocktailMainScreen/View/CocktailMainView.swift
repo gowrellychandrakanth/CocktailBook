@@ -1,5 +1,5 @@
 //
-//  CocktailView.swift
+//  CocktailMainView.swift
 //  CocktailBook
 //
 //  Created by Chandra Kanth on 07/03/25.
@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct CocktailView: View {
-    @StateObject private var viewModel = CocktailViewModel()
+struct CocktailMainView: View {
+    @StateObject private var viewModel = CocktailMainViewModel()
     
     var body: some View {
         NavigationView {
@@ -31,14 +31,17 @@ struct CocktailView: View {
                 }
             } else {
                 List(viewModel.filteredCocktails) { cocktail in
-                    CocktailListItemView(cocktail: cocktail)
+                    NavigationLink(destination: CocktailDetailView(cocktail: cocktail, cocktailTitle: viewModel.cocktailState.rawValue)) {
+                        
+                        CocktailListItemView(cocktail: cocktail)
+                    }
                 }
                 .navigationTitle(viewModel.cocktailState.rawValue)
                 .toolbar {
                     ToolbarItem(placement: .principal) {
                         /*On toggling the segment picker, we update the cocktails list to show either Alcoholic or Non-Alcoholic options.*/
                         Picker("Filter", selection: $viewModel.cocktailState) {
-                            ForEach(CocktailViewModel.CocktailState.allCases, id: \.self) { state in
+                            ForEach(CocktailMainViewModel.CocktailState.allCases, id: \.self) { state in
                                 Text(state.rawValue)
                             }
                         }

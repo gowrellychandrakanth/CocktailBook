@@ -1,5 +1,5 @@
 //
-//  CocktailViewModel.swift
+//  CocktailMainViewModel.swift
 //  CocktailBook
 //
 //  Created by Chandra Kanth on 07/03/25.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-class CocktailViewModel: ObservableObject {
+class CocktailMainViewModel: ObservableObject {
     
     enum CocktailState: String, CaseIterable {
         case all = "All Cocktails"
