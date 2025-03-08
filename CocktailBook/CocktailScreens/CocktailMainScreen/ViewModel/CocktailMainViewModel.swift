@@ -15,29 +15,35 @@ class CocktailMainViewModel: ObservableObject {
         case nonAlcoholic = "Non-Alcoholic"
     }
     
-    @Published var cocktailModel: [CocktailModel] = []
+    @Published var cocktailList: [CocktailModel] = []
     @Published var cocktailState: CocktailState = .all
     @Published var errorMessage = ""
-    @Published var apiLoading = true
+    @Published var apiLoading = false
     
     private let cocktailsAPI: CocktailsAPI
+    let cocktailHelper: CocktailDataManager
     
-    init(cocktailsAPI: CocktailsAPI = FakeCocktailsAPI()) {
+    init(cocktailsAPI: CocktailsAPI = FakeCocktailsAPI(), cocktailHelper: CocktailDataManager = CocktailDataManager()) {
         self.cocktailsAPI = cocktailsAPI
+        self.cocktailHelper = cocktailHelper
         loadApi()
     }
     
     var filteredCocktails: [CocktailModel] {
-        let cocktailData: [CocktailModel]
-        switch cocktailState {
-        case .all:
-            cocktailData = cocktailModel
-        case .alcoholic:
-            cocktailData = cocktailModel.filter { $0.type == "alcoholic" }
-        case .nonAlcoholic:
-            cocktailData = cocktailModel.filter { $0.type != "alcoholic"  }
+        let filteredData = cocktailList.filter {
+            switch cocktailState {
+            case .all:
+                return true
+            case .alcoholic:
+                return $0.type == "alcoholic"
+            case .nonAlcoholic:
+                return $0.type != "alcoholic"
+            }
         }
-        return cocktailData
+        
+        return filteredData.sorted {
+            ($0.isFavourite == $1.isFavourite) ? ($0.nameText < $1.nameText) : $0.isFavourite
+        }
     }
     
     func loadApi() {
@@ -47,8 +53,12 @@ class CocktailMainViewModel: ObservableObject {
             DispatchQueue.main.async {
                 switch result {
                 case .success(let cocktailData):
-                    self.cocktailModel = cocktailData
-                    self.apiLoading = false
+                    /*Once the parsing is successful read vaules from CocktailDataManager and Update the selected Favorites in the List*/
+                    self.cocktailList = cocktailData.map { cocktail in
+                        var newValue = cocktail
+                        newValue.isFavourite = self.cocktailHelper.loadAll().contains(cocktail.id)
+                        return newValue
+                    }
                 case .failure(let error):
                     self.errorMessage = error.errorDescription
                 }

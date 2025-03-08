@@ -15,7 +15,7 @@ struct CocktailMainView: View {
             if viewModel.apiLoading {
                 ProgressView("Loading...")
                     .padding()
-            } else if viewModel.cocktailModel.isEmpty {
+            } else if viewModel.cocktailList.isEmpty {
                 VStack {
                     Text("No data available.")
                         .padding()
@@ -31,15 +31,18 @@ struct CocktailMainView: View {
                 }
             } else {
                 List(viewModel.filteredCocktails) { cocktail in
-                    NavigationLink(destination: CocktailDetailView(cocktail: cocktail, cocktailTitle: viewModel.cocktailState.rawValue)) {
-                        
-                        CocktailListItemView(cocktail: cocktail)
+                    NavigationLink(destination: CocktailDetailView(
+                        cocktailItem: cocktail,
+                        cocktailTitle: viewModel.cocktailState.rawValue,
+                        favouritesToggle: $viewModel.cocktailList[viewModel.cocktailList.firstIndex(where: { $0.id == cocktail.id })!].isFavourite,
+                        cocktailHelper: viewModel.cocktailHelper
+                    )) {
+                        CocktailListItemView(cocktailItem: cocktail)
                     }
                 }
                 .navigationTitle(viewModel.cocktailState.rawValue)
                 .toolbar {
                     ToolbarItem(placement: .principal) {
-                        /*On toggling the segment picker, we update the cocktails list to show either Alcoholic or Non-Alcoholic options.*/
                         Picker("Filter", selection: $viewModel.cocktailState) {
                             ForEach(CocktailMainViewModel.CocktailState.allCases, id: \.self) { state in
                                 Text(state.rawValue)
@@ -66,5 +69,5 @@ struct CocktailMainView: View {
 }
 
 //#Preview {
-//    CocktailView()
+//    CocktailMainView()
 //}

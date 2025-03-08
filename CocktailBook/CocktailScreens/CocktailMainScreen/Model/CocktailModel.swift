@@ -16,6 +16,7 @@ struct CocktailModel: Identifiable, Codable {
     let preparationMinutes: Int?
     let imageName: String?
     let ingredients: [String]?
+    var isFavourite: Bool = false
     
     private enum CodingKeys: String, CodingKey {
         case id, name, type, shortDescription, longDescription, preparationMinutes, imageName, ingredients
@@ -28,7 +29,8 @@ struct CocktailModel: Identifiable, Codable {
          longDescription: String? = nil,
          preparationMinutes: Int? = nil,
          imageName: String? = nil,
-         ingredients: [String]? = nil) {
+         ingredients: [String]? = nil,
+         isFavorite: Bool = false) {
         self.id = id
         self.name = name
         self.type = type
@@ -37,5 +39,12 @@ struct CocktailModel: Identifiable, Codable {
         self.preparationMinutes = preparationMinutes
         self.imageName = imageName
         self.ingredients = ingredients
+        self.isFavourite = isFavorite
+    }
+}
+
+extension CocktailModel {
+    var nameText: String {
+        return name ?? ""
     }
 }

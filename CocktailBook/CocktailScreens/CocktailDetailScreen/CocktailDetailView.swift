@@ -8,8 +8,11 @@
 import SwiftUI
 
 struct CocktailDetailView: View {
-    let cocktail: CocktailModel
+    let cocktailItem: CocktailModel
     let cocktailTitle: String
+    
+    @Binding var favouritesToggle: Bool
+    let cocktailHelper: CocktailDataManager
     
     @Environment(\.presentationMode) var presentationMode
     
@@ -17,7 +20,7 @@ struct CocktailDetailView: View {
         VStack {
             ScrollView {
                 VStack(alignment: .leading) {
-                    if let preparationMinutes = cocktail.preparationMinutes {
+                    if let preparationMinutes = cocktailItem.preparationMinutes {
                         HStack {
                             Image(systemName: "clock")
                             Text("\(preparationMinutes) Minutes")
@@ -28,7 +31,7 @@ struct CocktailDetailView: View {
                         .padding([.leading, .trailing])
                     }
                     
-                    if let imageName = cocktail.imageName {
+                    if let imageName = cocktailItem.imageName {
                         HStack {
                             Spacer()
                             
@@ -40,7 +43,7 @@ struct CocktailDetailView: View {
                         }
                     }
                     
-                    if let longDescription = cocktail.longDescription {
+                    if let longDescription = cocktailItem.longDescription {
                         Text(longDescription)
                             .padding()
                     }
@@ -49,7 +52,7 @@ struct CocktailDetailView: View {
                         .font(.headline)
                         .padding([.leading, .trailing, .top])
                     
-                    if let ingredients = cocktail.ingredients {
+                    if let ingredients = cocktailItem.ingredients {
                         ForEach(ingredients, id: \.self) { ingredient in
                             HStack {
                                 Image(systemName: "arrowtriangle.right.fill")
@@ -64,7 +67,7 @@ struct CocktailDetailView: View {
                 .padding()
             }
         }
-        .navigationTitle(cocktail.name ?? "")
+        .navigationTitle(cocktailItem.name ?? "")
         .navigationBarTitleDisplayMode(.large)
         .navigationBarBackButtonHidden(true)
         .toolbar {
@@ -78,6 +81,21 @@ struct CocktailDetailView: View {
                     presentationMode.wrappedValue.dismiss()
                 }
             }
+            
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: {
+                    favouritesToggle.toggle()
+                    if favouritesToggle {
+                        cocktailHelper.addData(cocktailItem.id)
+                    } else {
+                        cocktailHelper.removeData(cocktailItem.id)
+                    }
+                }) {
+                    Image(systemName: favouritesToggle ? "heart.fill" : "heart")
+                        .foregroundColor(.blue)
+                }
+            }
         }
     }
 }
+

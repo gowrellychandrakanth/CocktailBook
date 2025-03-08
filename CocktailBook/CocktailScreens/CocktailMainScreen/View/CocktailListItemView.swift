@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct CocktailListItemView: View {
-    let cocktail: CocktailModel
+    let cocktailItem: CocktailModel
     
     var body: some View {
         HStack {
-            if let imageName = cocktail.imageName {
+            if let imageName = cocktailItem.imageName {
                 Image(imageName)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
@@ -22,19 +22,23 @@ struct CocktailListItemView: View {
             }
             
             VStack(alignment: .leading) {
-                if let name = cocktail.name {
+                if let name = cocktailItem.name {
                     Text(name)
                         .font(.headline)
-                        .foregroundColor(.primary)
+                        .foregroundColor(cocktailItem.isFavourite ? .blue : .primary)
                 }
                 
-                if let shortDescription = cocktail.shortDescription {
+                if let shortDescription = cocktailItem.shortDescription {
                     Text(shortDescription)
                         .font(.subheadline)
                         .foregroundColor(.gray)
                 }
             }
             Spacer()
+            if cocktailItem.isFavourite {
+                Image(systemName: "heart.fill")
+                    .foregroundColor(.blue)
+            }
         }
     }
 }
