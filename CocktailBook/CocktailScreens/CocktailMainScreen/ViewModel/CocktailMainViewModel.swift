@@ -18,14 +18,14 @@ class CocktailMainViewModel: ObservableObject {
     @Published var cocktailList: [CocktailModel] = []
     @Published var cocktailState: CocktailState = .all
     @Published var errorMessage = ""
-    @Published var apiLoading = false
+    @Published var apiLoading = true
     
     private let cocktailsAPI: CocktailsAPI
-    let cocktailHelper: CocktailDataManager
+    let cocktailDataManager: CocktailDataManager
     
-    init(cocktailsAPI: CocktailsAPI = FakeCocktailsAPI(), cocktailHelper: CocktailDataManager = CocktailDataManager()) {
+    init(cocktailsAPI: CocktailsAPI = FakeCocktailsAPI(), cocktailDataManager: CocktailDataManager = CocktailDataManager()) {
         self.cocktailsAPI = cocktailsAPI
-        self.cocktailHelper = cocktailHelper
+        self.cocktailDataManager = cocktailDataManager
         loadApi()
     }
     
@@ -56,7 +56,7 @@ class CocktailMainViewModel: ObservableObject {
                     /*Once the parsing is successful read vaules from CocktailDataManager and Update the selected Favorites in the List*/
                     self.cocktailList = cocktailData.map { cocktail in
                         var newValue = cocktail
-                        newValue.isFavourite = self.cocktailHelper.loadAll().contains(cocktail.id)
+                        newValue.isFavourite = self.cocktailDataManager.loadAll().contains(cocktail.id)
                         return newValue
                     }
                 case .failure(let error):

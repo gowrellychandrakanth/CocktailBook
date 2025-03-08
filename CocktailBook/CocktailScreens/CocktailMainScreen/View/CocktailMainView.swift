@@ -35,7 +35,7 @@ struct CocktailMainView: View {
                         cocktailItem: cocktail,
                         cocktailTitle: viewModel.cocktailState.rawValue,
                         favouritesToggle: $viewModel.cocktailList[viewModel.cocktailList.firstIndex(where: { $0.id == cocktail.id })!].isFavourite,
-                        cocktailDataHelper: viewModel.cocktailHelper
+                        cocktailDataHelper: viewModel.cocktailDataManager
                     )) {
                         CocktailListItemView(cocktailItem: cocktail)
                     }
@@ -68,6 +68,6 @@ struct CocktailMainView: View {
     }
 }
 
-#Preview {
-    CocktailMainView()
-}
+//#Preview {
+//    CocktailMainView()
+//}
